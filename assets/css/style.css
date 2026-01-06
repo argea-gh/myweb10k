@@ -819,56 +819,6 @@ body {
   line-height: 1.6;
 }
 
-/* Ganti ini ....
-.modal-footer {
-  padding: 0 24px 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.modal-footer .btn {
-  width: 100%;
-}
-*/
-
-/* TABLET & UP: Grid layout */
-/*
-@media (min-width: 768px) {
-  .modal-content {
-    margin: 40px auto;
-  }
-
-  .product-modal-header {
-    flex-direction: row;
-    text-align: left;
-    gap: 32px;
-    align-items: flex-start;
-  }
-
-  .product-modal-header img {
-    width: 280px;
-    height: 280px;
-    max-width: none;
-    margin: 0;
-  }
-
-  .modal-info {
-    flex: 1;
-  }
-
-  .modal-footer {
-    flex-direction: row;
-    justify-content: flex-end;
-  }
-
-  .modal-footer .btn {
-    width: auto;
-  }
-}
-*/
-/* sampe sini */
-
 /* ────────────────────────────────────────── */
 /* MODAL FOOTER BUTTONS — RATA TENGAH */
 /* ────────────────────────────────────────── */
@@ -996,6 +946,9 @@ body {
   transition: bottom 0.4s ease;
   max-height: 80vh;
   overflow-y: auto;
+  /* Tambahan Edit footer sticky */
+  display: flex;
+  flex-direction: column;
 }
 
 .cart-panel.active {
@@ -1069,6 +1022,45 @@ body {
 
 #checkoutBtn {
   width: 100%;
+}
+
+/* ─────────── Tambahan ───────────────────── */
+/* KERANJANG: Footer Sticky dalam Bottom Sheet */
+/* ────────────────────────────────────────── */
+
+.cart-content {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 90px; /* ruang untuk footer sticky */
+}
+
+.cart-footer-sticky {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+  padding: 16px 20px;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+  z-index: 10;
+}
+
+.cart-total-sticky {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--green-primary);
+  text-align: right;
+  margin-bottom: 12px;
+}
+
+.cart-footer-sticky .btn {
+  width: 100%;
+  padding: 14px;
+  font-size: 1.05rem;
+}
+
+/* Hindari double footer */
+.cart-footer {
+  display: none;
 }
 
 /* ────────────────────────────────────────── */
@@ -1290,11 +1282,11 @@ body {
   }
 
 .qty-plus {
-  background: #a3ee88;
+  background-color: #a3ee88;
 }
 
 .qty-minus {
-  background: #f3f4f6;
+  background-color: #f3f4f6;
 }
   
 /* ────────────────────────────────────────── */
