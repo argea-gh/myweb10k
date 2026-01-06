@@ -349,20 +349,29 @@
     </div>
   </div>
 
-  <!-- ✅ MINI PANEL KERANJANG (Bottom Sheet) -->
-  <div class="cart-panel" id="cartPanel">
-    <div class="cart-header">
-      <h3>Keranjang Saya</h3>
-      <button class="cart-close" id="cartClose">&times;</button>
-    </div>
+<!-- ✅ KERANJANG BOTTOM SHEET (Sudah ada di kode Anda) -->
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <h3>Keranjang Saya</h3>
+    <button class="cart-close" id="cartClose">&times;</button>
+  </div>
+  
+  <!-- ✅ WRAPPER KONTEN -->
+  <div class="cart-content">
     <div class="cart-items" id="cartItems">
       <!-- Diisi oleh JS -->
     </div>
-    <div class="cart-footer">
-      <div class="cart-total">Total: <span id="cartTotal">Rp0</span></div>
-      <a href="https://wa.me/6282241900467" target="_blank" class="btn btn-primary" id="checkoutBtn">Lanjut ke WhatsApp</a>
-    </div>
   </div>
+  
+  <!-- ✅ FOOTER STICKY (Baru) -->
+  <div class="cart-footer-sticky">
+    <div class="cart-total-sticky">Total: <span id="cartTotalSticky">Rp0</span></div>
+    <a href="https://wa.me/6282241900467" target="_blank" class="btn btn-primary" id="checkoutBtnSticky">
+      📲 Lanjut ke WhatsApp
+    </a>
+  </div>
+</div>
+	
   <div class="cart-overlay" id="cartOverlay"></div>
 
   <!-- ✅ SCRIPTS -->
