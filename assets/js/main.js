@@ -321,6 +321,28 @@ function updateCartDisplay(cart) {
     checkoutBtn.href = '#';
     checkoutBtn.classList.add('disabled');
   }
+
+  // ✅ Update total di footer sticky
+const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+const totalFormatted = formatRupiah(total);
+
+// Update semua tempat yang menampilkan total
+document.getElementById('cartTotal')?.textContent = totalFormatted;        // lama (opsional)
+document.getElementById('cartTotalSticky').textContent = totalFormatted;   // baru (wajib)
+
+// Update tombol checkout di sticky footer
+const checkoutBtnSticky = document.getElementById('checkoutBtnSticky');
+if (checkoutBtnSticky) {
+  if (cart.length > 0) {
+    const itemsList = cart.map(item => 
+      `• ${item.name} (${formatRupiah(item.price)} × ${item.quantity}) = ${formatRupiah(item.price * item.quantity)}`
+    ).join('%0A');
+    const totalRp = `Total: ${totalFormatted}`;
+    checkoutBtnSticky.href = `https://wa.me/6282241900467?text=Halo%20Herbaprima%2C%20saya%20mau%20pesan%3A%0A${itemsList}%0A%0A${totalRp}`;
+  } else {
+    checkoutBtnSticky.href = '#';
+  }
+}
 }
 
 // ──────────────────────────────────────────
