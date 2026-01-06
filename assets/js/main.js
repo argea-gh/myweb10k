@@ -255,54 +255,51 @@ document.addEventListener('click', (e) => {
 // ───── End of CART: Ubah Jumlah (+ / -) ────
 
 function updateCartDisplay(cart) {
-  // Update cart items UI
+  // Hitung total sekali saja
+  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const totalFormatted = formatRupiah(total);
+
+  // Update tampilan keranjang
   if (cart.length === 0) {
     cartItems.innerHTML = '<p style="text-align:center; color:#6b7280;">Keranjang masih kosong</p>';
   } else {
     cartItems.innerHTML = cart.map(item => {
-      const total = item.price * item.quantity;
-      const totalFormatted = formatRupiah(total);
+      const itemTotal = item.price * item.quantity;
       return `
-
         <div class="cart-item" data-id="${item.id}">
-  <img src="${item.image}" alt="${item.name}" />
-  <div class="cart-info">
-    <h4>${item.name}</h4>
-
-    <!-- Opsional: tetap tampilkan harga satuan kecil -->
-    <div class="price-unit">(${formatRupiah(item.price)} × ${item.quantity})</div>
-    
-    <!-- ✅ Tambahkan baris ini untuk harga total per item -->
-    <div class="price-item-total">${totalFormatted}</div>
-     
-    <div class="qty-control">
-      <button class="qty-btn qty-minus">−</button>
-      <span class="qty-value">${item.quantity}</span>
-      <button class="qty-btn qty-plus">+</button>
-      </div>
-    </div>
-    
-  <!-- ✅ Ikon hapus per item -->
-  <button class="cart-remove" data-id="${item.id}" aria-label="Hapus ${item.name}">
-  <i class="fas fa-trash"></i>
-</button>
-</div>
+          <img src="${item.image}" alt="${item.name}" />
+          <div class="cart-info">
+            <h4>${item.name}</h4>
+            <div class="price-unit">(${formatRupiah(item.price)} × ${item.quantity})</div>
+            <div class="price-item-total">${formatRupiah(itemTotal)}</div>
+            <div class="qty-control">
+              <button class="qty-btn qty-minus">−</button>
+              <span class="qty-value">${item.quantity}</span>
+              <button class="qty-btn qty-plus">+</button>
+            </div>
+          </div>
+          <button class="cart-remove" data-id="${item.id}" aria-label="Hapus ${item.name}">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
       `;
     }).join('');
-    
-    // Add remove listeners
+
+    // Event delegation untuk tombol hapus
     document.querySelectorAll('.cart-remove').forEach(btn => {
       btn.addEventListener('click', (e) => {
-        removeItem(e.target.dataset.id);
+        removeItem(e.target.closest('.cart-remove').dataset.id);
       });
     });
   }
 
-  // Update total
-  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  cartTotal.textContent = formatRupiah(total);
+  // ✅ Update SEMUA elemen total (hanya 1x hitung)
+  if (cartTotal) cartTotal.textContent = totalFormatted;
+  if (document.getElementById('cartTotalSticky')) {
+    document.getElementById('cartTotalSticky').textContent = totalFormatted;
+  }
 
-  // ✅ UPDATE BADGE DI SINI — SETIAP KALI KERANJANG BERUBAH
+  // ✅ Update badge
   const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
   const badge = document.getElementById('cartBadge');
   if (badge) {
@@ -310,39 +307,25 @@ function updateCartDisplay(cart) {
     badge.classList.toggle('show', totalCount > 0);
   }
 
-  // Update checkout button
-  if (cart.length > 0) {
-    const itemsList = cart.map(item => 
-      `• ${item.name} x${item.quantity} = Rp${(item.price * item.quantity).toLocaleString('id-ID')}`
-    ).join('%0A');
-    const totalRp = `Total: Rp${total.toLocaleString('id-ID')}`;
-    checkoutBtn.href = `https://wa.me/6282241900467?text=Halo%20Herbaprima%2C%20saya%20mau%20pesan%3A%0A${itemsList}%0A%0A${totalRp}`;
-  } else {
-    checkoutBtn.href = '#';
-    checkoutBtn.classList.add('disabled');
-  }
+  // ✅ Update tombol checkout (versi ringkas)
+  const updateCheckoutButton = (btn, itemsList) => {
+    if (!btn) return;
+    if (cart.length > 0) {
+      const text = `Halo Herbaprima, saya mau pesan:\n${itemsList}\n\nTotal: ${totalFormatted}`;
+      btn.href = `https://wa.me/6282241900467?text=${encodeURIComponent(text)}`;
+    } else {
+      btn.href = '#';
+    }
+  };
 
-  // ✅ Update total di footer sticky
-const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-const totalFormatted = formatRupiah(total);
-
-// Update semua tempat yang menampilkan total
-document.getElementById('cartTotal')?.textContent = totalFormatted;        // lama (opsional)
-document.getElementById('cartTotalSticky').textContent = totalFormatted;   // baru (wajib)
-
-// Update tombol checkout di sticky footer
-const checkoutBtnSticky = document.getElementById('checkoutBtnSticky');
-if (checkoutBtnSticky) {
-  if (cart.length > 0) {
-    const itemsList = cart.map(item => 
-      `• ${item.name} (${formatRupiah(item.price)} × ${item.quantity}) = ${formatRupiah(item.price * item.quantity)}`
-    ).join('%0A');
-    const totalRp = `Total: ${totalFormatted}`;
-    checkoutBtnSticky.href = `https://wa.me/6282241900467?text=Halo%20Herbaprima%2C%20saya%20mau%20pesan%3A%0A${itemsList}%0A%0A${totalRp}`;
-  } else {
-    checkoutBtnSticky.href = '#';
-  }
-}
+  // Update semua tombol checkout
+  updateCheckoutButton(checkoutBtn, cart.map(item => 
+    `• ${item.name} (${formatRupiah(item.price)} × ${item.quantity}) = ${formatRupiah(item.price * item.quantity)}`
+  ).join('\n'));
+  
+  updateCheckoutButton(document.getElementById('checkoutBtnSticky'), cart.map(item => 
+    `• ${item.name} = ${formatRupiah(item.price * item.quantity)}`
+  ).join('\n'));
 }
 
 // ──────────────────────────────────────────
